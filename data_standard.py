@@ -67,6 +67,38 @@ else:
         sheet_selector = st.selectbox("1.3) Seleciona a aba do seu arquivo:",wb.sheetnames)
         header_line = st.number_input('1.4) Selecione em qual linha está os nomes das colunas da sua base:', step=1)
         new_df = pd.read_excel(input_dataframe, sheet_selector, header=header_line)
+
+        drop_line = st.checkbox("Apagar linha", key="disabled")
+
+        if drop_line:
+
+            df_column = st.selectbox('Selecione a coluna que inicia o conteúdo da linha que será apagada:', new_df.columns)
+            df_line = st.text_input('Escreva o conteúdo da primeira célula da linha que deseja apagar:')
+
+            if new_df[df_column][1] is int:
+                new_df[df_column] = new_df[df_column].astype(int)
+                df_line = int(df_line)
+                st.write('int')
+            elif new_df[df_column][1] is float:
+                st.write('float')
+                new_df[df_column] = new_df[df_column].astype(float)
+                df_line = float(df_line)
+            else:
+                pass
+
+            # new_df[df_column] = new_df[df_column].astype(str)
+
+            def column_color(val):
+                color = '#FFDBE4'
+                return f'background-color: {color}'
+            
+            # def line_color(val):
+            #     color = '#FFDBE4'
+            #     return f'background-color: {color}'
+            
+            new_df = new_df.drop(new_df[new_df[df_column] == df_line].index)
+            # new_df = new_df.style.applymap(column_color, subset=[df_column])
+
         st.caption(f":blue[1.5) Confira a base seleciona na aba `{sheet_selector}`:]")
         st.write(new_df)
         st.markdown("----")
